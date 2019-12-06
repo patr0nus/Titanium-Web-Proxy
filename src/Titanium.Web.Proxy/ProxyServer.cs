@@ -54,49 +54,18 @@ namespace Titanium.Web.Proxy
         /// </summary>
         private int serverConnectionCount;
 
-        /// <inheritdoc />
-        /// <summary>
-        ///     Initializes a new instance of ProxyServer class with provided parameters.
-        /// </summary>
-        /// <param name="userTrustRootCertificate">
-        ///     Should fake HTTPS certificate be trusted by this machine's user certificate
-        ///     store?
-        /// </param>
-        /// <param name="machineTrustRootCertificate">Should fake HTTPS certificate be trusted by this machine's certificate store?</param>
-        /// <param name="trustRootCertificateAsAdmin">
-        ///     Should we attempt to trust certificates with elevated permissions by
-        ///     prompting for UAC if required?
-        /// </param>
-        public ProxyServer(bool userTrustRootCertificate = true, bool machineTrustRootCertificate = false,
-            bool trustRootCertificateAsAdmin = false) : this(null, null, userTrustRootCertificate,
-            machineTrustRootCertificate, trustRootCertificateAsAdmin)
-        {
-        }
-
         /// <summary>
         ///     Initializes a new instance of ProxyServer class with provided parameters.
         /// </summary>
         /// <param name="rootCertificateName">Name of the root certificate.</param>
         /// <param name="rootCertificateIssuerName">Name of the root certificate issuer.</param>
-        /// <param name="userTrustRootCertificate">
-        ///     Should fake HTTPS certificate be trusted by this machine's user certificate
-        ///     store?
-        /// </param>
-        /// <param name="machineTrustRootCertificate">Should fake HTTPS certificate be trusted by this machine's certificate store?</param>
-        /// <param name="trustRootCertificateAsAdmin">
-        ///     Should we attempt to trust certificates with elevated permissions by
-        ///     prompting for UAC if required?
-        /// </param>
-        public ProxyServer(string? rootCertificateName, string? rootCertificateIssuerName,
-            bool userTrustRootCertificate = true, bool machineTrustRootCertificate = false,
-            bool trustRootCertificateAsAdmin = false)
+        public ProxyServer(string? rootCertificateName, string? rootCertificateIssuerName)
         {
             BufferPool = new DefaultBufferPool();
             ProxyEndPoints = new List<ProxyEndPoint>();
             tcpConnectionFactory = new TcpConnectionFactory(this);
 
-            CertificateManager = new CertificateManager(rootCertificateName, rootCertificateIssuerName,
-                userTrustRootCertificate, machineTrustRootCertificate, trustRootCertificateAsAdmin, ExceptionFunc);
+            CertificateManager = new CertificateManager(rootCertificateName, rootCertificateIssuerName, ExceptionFunc);
         }
 
         /// <summary>
@@ -400,11 +369,6 @@ namespace Titanium.Web.Proxy
             }
 
             setThreadPoolMinThread(ThreadPoolWorkerThread);
-
-            if (ProxyEndPoints.OfType<ExplicitProxyEndPoint>().Any(x => x.GenericCertificate == null))
-            {
-                CertificateManager.EnsureRootCertificate();
-            }
 
 
             ProxyRunning = true;
