@@ -18,10 +18,6 @@ namespace Titanium.Web.Proxy.Helpers
             ProxyServer = proxyServer;
             ProxyOverride = proxyOverride;
 
-            if (proxyServer != null)
-            {
-                Proxies = GetSystemProxyValues(proxyServer).ToDictionary(x => x.ProtocolType);
-            }
 
             if (proxyOverride != null)
             {
@@ -47,8 +43,6 @@ namespace Titanium.Web.Proxy.Helpers
                 {
                     BypassList = overrides2.ToArray();
                 }
-
-                Proxies = GetSystemProxyValues(proxyServer).ToDictionary(x => x.ProtocolType);
             }
         }
 
@@ -65,8 +59,6 @@ namespace Titanium.Web.Proxy.Helpers
         internal bool BypassLoopback { get; }
 
         internal bool BypassOnLocal { get; }
-
-        internal Dictionary<ProxyProtocolType, HttpSystemProxyValue>? Proxies { get; }
 
         internal string[]? BypassList { get; }
 
@@ -151,71 +143,6 @@ namespace Titanium.Web.Proxy.Helpers
             }
 
             return protocolType;
-        }
-
-        /// <summary>
-        ///     Parse the system proxy setting values
-        /// </summary>
-        /// <param name="proxyServerValues"></param>
-        /// <returns></returns>
-        internal static List<HttpSystemProxyValue> GetSystemProxyValues(string? proxyServerValues)
-        {
-            var result = new List<HttpSystemProxyValue>();
-
-            if (string.IsNullOrWhiteSpace(proxyServerValues))
-            {
-                return result;
-            }
-
-            var proxyValues = proxyServerValues!.Split(';');
-
-            if (proxyValues.Length > 0)
-            {
-                foreach (string str in proxyValues)
-                {
-                    var proxyValue = parseProxyValue(str);
-                    if (proxyValue != null)
-                    {
-                        result.Add(proxyValue);
-                    }
-
-                }
-            }
-            else
-            {
-                var parsedValue = parseProxyValue(proxyServerValues);
-                if (parsedValue != null)
-                {
-                    result.Add(parsedValue);
-                }
-            }
-
-            return result;
-        }
-
-        /// <summary>
-        ///     Parses the system proxy setting string
-        /// </summary>
-        /// <param name="value"></param>
-        /// <returns></returns>
-        private static HttpSystemProxyValue? parseProxyValue(string value)
-        {
-            string tmp = Regex.Replace(value, @"\s+", " ").Trim();
-
-            int equalsIndex = tmp.IndexOf("=", StringComparison.InvariantCulture);
-            if (equalsIndex >= 0)
-            {
-                string protocolTypeStr = tmp.Substring(0, equalsIndex);
-                var protocolType = ParseProtocolType(protocolTypeStr);
-
-                if (protocolType.HasValue)
-                {
-                    var endPointParts = tmp.Substring(equalsIndex + 1).Split(':');
-                    return new HttpSystemProxyValue(endPointParts[0], int.Parse(endPointParts[1]), protocolType.Value);
-                }
-            }
-
-            return null;
         }
     }
 }

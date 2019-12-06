@@ -38,7 +38,6 @@ namespace Titanium.Web.Proxy.EventArguments
 
         protected readonly IBufferPool BufferPool;
         protected readonly ExceptionHandler ExceptionFunc;
-        private bool enableWinAuth;
 
         /// <summary>
         /// Relative milliseconds for various events.
@@ -60,7 +59,6 @@ namespace Titanium.Web.Proxy.EventArguments
             ClientStream = clientStream;
             HttpClient = new HttpWebClient(connectRequest, request, new Lazy<int>(() => clientStream.Connection.GetProcessId(endPoint)));
             LocalEndPoint = endPoint;
-            EnableWinAuth = server.EnableWinAuth && isWindowsAuthenticationSupported;
         }
 
         /// <summary>
@@ -71,21 +69,6 @@ namespace Titanium.Web.Proxy.EventArguments
         {
             get => HttpClient.UserData;
             set => HttpClient.UserData = value;
-        }
-
-        /// <summary>
-        ///     Enable/disable Windows Authentication (NTLM/Kerberos) for the current session.
-        /// </summary>
-        public bool EnableWinAuth
-        {
-            get => enableWinAuth;
-            set
-            {
-                if (value && !isWindowsAuthenticationSupported)
-                    throw new Exception("Windows Authentication is not supported");
-
-                enableWinAuth = value;
-            }
         }
 
         /// <summary>

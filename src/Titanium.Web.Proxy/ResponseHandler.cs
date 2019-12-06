@@ -3,7 +3,6 @@ using System.Net;
 using System.Threading.Tasks;
 using Titanium.Web.Proxy.EventArguments;
 using Titanium.Web.Proxy.Extensions;
-using Titanium.Web.Proxy.Network.WinAuth.Security;
 
 namespace Titanium.Web.Proxy
 {
@@ -37,18 +36,6 @@ namespace Titanium.Web.Proxy
             var response = args.HttpClient.Response;
             args.ReRequest = false;
 
-            // check for windows authentication
-            if (args.EnableWinAuth)
-            {
-                if (response.StatusCode == (int)HttpStatusCode.Unauthorized)
-                {
-                    await handle401UnAuthorized(args);
-                }
-                else
-                {
-                    WinAuthEndPoint.AuthenticatedResponse(args.HttpClient.Data);
-                }
-            }
 
             // save original values so that if user changes them
             // we can still use original values when syphoning out data from attached tcp connection.

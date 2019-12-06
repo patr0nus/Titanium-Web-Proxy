@@ -103,14 +103,6 @@ namespace Titanium.Web.Proxy
                                 request.Host = request.RequestUri.Authority;
                             }
 
-                            // if win auth is enabled
-                            // we need a cache of request body
-                            // so that we can send it after authentication in WinAuthHandler.cs
-                            if (args.EnableWinAuth && request.HasBody)
-                            {
-                                await args.GetRequestBody(cancellationToken);
-                            }
-
                             // we need this to syphon out data from connection if API user changes them.
                             request.SetOriginalHeaders();
 
